@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { Header } from './header/header';
 import { Nav } from './nav/nav';
+import { PostDemoComponent } from './post-demo/post-demo';
+import { Climate } from './climate/climate';
 
 export const routes: Routes = [
     {
@@ -13,9 +15,11 @@ export const routes: Routes = [
             title:'Navigation',
         }]
     },{
-        path:'',
-        component:Header,
+        path:'post-demo',
+        component:PostDemoComponent,
         title:'Home',
-        
+    },{
+        path:'',
+        component:Climate,
     }
 ];

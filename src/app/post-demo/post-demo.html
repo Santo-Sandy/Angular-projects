@@ -1,0 +1,10 @@
+<h2>All Posts</h2>
+<a routerLink="/climate">climate</a>
+<ul>
+  <li *ngFor="let p of posts">
+    {{ p.id }} - {{ p.title }}
+  </li>
+</ul>
+
+<h2>Single Post (ID 1)</h2>
+<p>{{ singlePost | json }}</p>
