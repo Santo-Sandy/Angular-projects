@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Output, EventEmitter, inject, InjectionToken, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Data } from '../data';
 import { ɵEmptyOutletComponent, RouterOutlet, RouterLink } from "@angular/router";
 import { Highlight } from '../highlight';
@@ -26,11 +26,18 @@ const Config=new InjectionToken<AppConfig>('app.config', {
 
 @Component({
   selector: 'app-form',
-  imports: [CommonModule,Highlight ,FormsModule, ɵEmptyOutletComponent, RouterOutlet,Nav,RouterLink],
+  imports: [CommonModule,Highlight,ReactiveFormsModule ,FormsModule, ɵEmptyOutletComponent, RouterOutlet,Nav,RouterLink],
   templateUrl: './form.html',
   styleUrl: './form.css',
 })
 export class Form {
+
+  private formbuilder=inject(FormBuilder);
+
+  form=this.formbuilder.group({
+    name:['',Validators.required],
+    email:[''],
+  });
   config=inject(Config);
   data:string="";
   show:boolean=false;
@@ -40,6 +47,10 @@ export class Form {
 
 Show: boolean=false ;
 color: string='';
+
+onsubmit(form:any){
+  console.log("Form submitted! ",form.value.name," ",form.value.email);
+}
 
 a:string='';
 

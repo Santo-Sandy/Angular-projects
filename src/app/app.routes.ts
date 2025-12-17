@@ -6,7 +6,7 @@ import { Climate } from './climate/climate';
 
 export const routes: Routes = [
     {
-        path:'form',
+        path:'',
         loadComponent:()=>import('./form/form').then(m=>m.Form),
         title:'Form',
         children:[{
@@ -19,7 +19,7 @@ export const routes: Routes = [
         component:PostDemoComponent,
         title:'Home',
     },{
-        path:'',
+        path:'climate',
         component:Climate,
     }
 ];

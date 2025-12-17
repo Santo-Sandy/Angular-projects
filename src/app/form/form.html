@@ -29,6 +29,14 @@
 <ng-component *ngIf="Show">and killed him</ng-component>
 and ran away.</p>
 
+<form [formGroup]="form" (ngSubmit)="onsubmit(form)">
+    <p>Form</p>
+    Name:&nbsp;
+    <input type="text" name="name" formControlName="name" >,<br>Email:&nbsp;
+    <input type="email" name="email" formControlName="email"><br><br>
+    <button type="submit" [disabled]="!form.valid">Submit</button>
+</form>
+
 <div><label for="colors"><h2>Pick a highlight color</h2>
   <input type="radio" name="colors" (click)="color='lightgreen'" />Green
   <input type="radio" name="colors" (click)="color='yellow'" />Yellow
