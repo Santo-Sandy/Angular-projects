@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Clim } from '../clim';
 import { CommonModule } from '@angular/common';
+import { loadingInterceptor } from '../loading-interceptor';
 
 @Component({
   selector: 'app-climate',
@@ -21,8 +22,7 @@ export class Climate {
 
   Getclimate(){
    this.climService.getclimate().subscribe(res=>{
-    next: this.dats = res.status;
-    next: this.data = res.body;
+    next: this.data = res;
    });
   }
 
