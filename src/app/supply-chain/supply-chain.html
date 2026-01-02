@@ -1,0 +1,213 @@
+<div class="routes-container">
+  <div class="routes-header">
+    <h1 class="main-title">Supply Chain Route Management</h1>
+    <p class="subtitle">Visualize and manage multiple supply chain paths</p>
+  </div>
+
+  <!-- View Mode Selector -->
+  <div class="view-selector">
+    <button 
+      class="view-btn"
+      [class.active]="viewMode === 'all'"
+      (click)="showAllPaths()"
+    >
+      All Routes
+    </button>
+    <button 
+      class="view-btn"
+      [class.active]="viewMode === 'by-store'"
+    >
+      By Store
+    </button>
+    <button 
+      class="view-btn"
+      [class.active]="viewMode === 'single-path'"
+    >
+      Single Path
+    </button>
+  </div>
+
+  <!-- Store Selector (for by-store view) -->
+  <div class="store-selector" *ngIf="viewMode === 'by-store' || viewMode === 'all'">
+    <h3>Select Store to View Routes</h3>
+    <div class="store-grid">
+      <div 
+        *ngFor="let store of getNodesByType('store')"
+        class="store-card"
+        [class.selected]="selectedStore?.id === store.id"
+        (click)="selectStore(store)"
+      >
+        <h4>{{ store.name }}</h4>
+        <p>{{ store.location }}</p>
+        <span class="path-count"> paths
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Paths Overview -->
+  <div class="paths-section" *ngIf="viewMode === 'all'">
+    <h2>All Supply Chain Paths</h2>
+    <div class="paths-grid">
+      <div 
+        *ngFor="let path of filteredPaths"
+        class="path-card"
+        (click)="selectPath(path)"
+      >
+        <div class="path-header">
+          <h3>{{ path.name }}</h3>
+          <span class="efficiency-badge">
+            Efficiency: {{ path.efficiency }}
+          </span>
+        </div>
+        <div class="path-details">
+          <div class="detail-item">
+            <span class="label">Hops:</span>
+            <span class="value">{{ path.nodes.length }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Cost:</span>
+            <span class="value">${{ path.totalCost.toLocaleString() }}</span>
+          </div>
+        </div>
+        <div class="path-flow">
+          <span *ngFor="let node of path.nodes; let i = index">
+            {{ node.type }}
+            <span *ngIf="i < path.nodes.length - 1"> → </span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- By Store View -->
+  <div class="by-store-section" *ngIf="viewMode === 'by-store' && selectedStore">
+    <h2>Routes to {{ selectedStore.name }}</h2>
+    
+    <div class="paths-list">
+      <div 
+        *ngFor="let path of filteredPaths; let i = index"
+        class="path-item"
+        (click)="selectPath(path)"
+      >
+        <div class="path-number">Path {{ i + 1 }}</div>
+        <div class="path-visualization">
+          <div 
+            *ngFor="let node of path.nodes; let j = index"
+            class="node-in-path"
+          >
+            <div class="node-box" [ngClass]="getNodeTypeClass(node.type)">
+              <div class="node-icon">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                </svg>
+              </div>
+              <div class="node-info">
+                <p class="node-name">{{ node.name }}</p>
+                <p class="node-location">{{ node.location }}</p>
+              </div>
+            </div>
+            
+            <div *ngIf="j < path.nodes.length - 1" class="route-connector">
+              <div class="route-line"></div>
+              <div class="route-info">
+                <p class="route-detail">{{ path.routes[j].distance }}</p>
+                <p class="route-detail">{{ path.routes[j].duration }}</p>
+                <p class="route-cost">${{ path.routes[j].cost }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="path-summary">
+          <span>Total Cost: ${{ path.totalCost.toLocaleString() }}</span>
+          <span>Efficiency: {{ path.efficiency }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Single Path Detailed View -->
+  <div class="single-path-section" *ngIf="viewMode === 'single-path' && selectedPath">
+    <button class="back-btn" (click)="showAllPaths()">← Back to All Paths</button>
+    
+    <h2>{{ selectedPath.name }}</h2>
+    
+    <div class="path-metrics">
+      <div class="metric-card">
+        <span class="metric-label">Total Cost</span>
+        <span class="metric-value">${{ selectedPath.totalCost.toLocaleString() }}</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Number of Hops</span>
+        <span class="metric-value">{{ selectedPath.nodes.length }}</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Efficiency Score</span>
+        <span class="metric-value">{{ selectedPath.efficiency }}</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Active Routes</span>
+        <span class="metric-value">{{ selectedPath.routes.length }}</span>
+      </div>
+    </div>
+
+    <div class="detailed-path">
+      <div *ngFor="let node of selectedPath.nodes; let i = index" class="detailed-node-section">
+        <!-- Node Details -->
+        <div class="detailed-node" [ngClass]="getNodeTypeClass(node.type)">
+          <div class="node-header">
+            <h3>{{ node.name }}</h3>
+            <span class="node-type-badge">{{ node.type }}</span>
+          </div>
+          <div class="node-details-grid">
+            <div class="node-detail">
+              <span class="detail-label">ID:</span>
+              <span>{{ node.id }}</span>
+            </div>
+            <div class="node-detail">
+              <span class="detail-label">Location:</span>
+              <span>{{ node.location }}</span>
+            </div>
+            <div class="node-detail">
+              <span class="detail-label">Contact:</span>
+              <span>{{ node.contact }}</span>
+            </div>
+            <div class="node-detail" *ngIf="node.capacity">
+              <span class="detail-label">Capacity:</span>
+              <span>{{ node.capacity }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Route Details -->
+        <div *ngIf="i < selectedPath.nodes.length - 1" class="detailed-route">
+          <div class="route-arrow">↓</div>
+          <div class="route-details-card">
+            <h4>Route {{ selectedPath.routes[i].id }}</h4>
+            <div class="route-details-grid">
+              <div class="route-detail-item">
+                <span class="label">Distance:</span>
+                <span class="value">{{ selectedPath.routes[i].distance }}</span>
+              </div>
+              <div class="route-detail-item">
+                <span class="label">Duration:</span>
+                <span class="value">{{ selectedPath.routes[i].duration }}</span>
+              </div>
+              <div class="route-detail-item">
+                <span class="label">Cost:</span>
+                <span class="value">${{ selectedPath.routes[i].cost.toLocaleString() }}</span>
+              </div>
+              <div class="route-detail-item">
+                <span class="label">Status:</span>
+                <span class="status-badge" [ngClass]="getRouteStatusClass(selectedPath.routes[i].status)">
+                  {{ selectedPath.routes[i].status }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

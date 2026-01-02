@@ -3,6 +3,7 @@ import { Header } from './header/header';
 import { Nav } from './nav/nav';
 import { PostDemoComponent } from './post-demo/post-demo';
 import { Climate } from './climate/climate';
+import { SupplyChain } from './supply-chain/supply-chain';
 
 export const routes: Routes = [
     {
@@ -19,7 +20,10 @@ export const routes: Routes = [
         component:PostDemoComponent,
         title:'Home',
     },{
-        path:'',
+        path:'climate',
         component:Climate,
+    },{
+        path:'',
+        component:SupplyChain,
     }
 ];
