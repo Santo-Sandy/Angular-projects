@@ -1,7 +1,7 @@
 .select-basic {
-  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+  appearance: none;
   padding: 12px 40px 12px 16px;
   font-size: 14px;
   font-weight: 500;
